@@ -42,4 +42,32 @@ def CREATOR(grid):
             else:
                 print(" X", end = "")
         print("")
-CREATOR(grid)
+
+def findAndCount(grid, int):
+    count = 0
+    for row in range(len(grid)):
+        for col in range(len(grid[row])):
+            if grid[row][col] == int:
+                count += 1
+    return count
+
+while True:
+    CREATOR(grid)
+    playerOcount = findAndCount(grid, 1)
+    playerXcount = findAndCount(grid, 2)
+    
+    print("Player O's turn")
+    rowToAddO = input("Which row is the cell you want to add in: ")
+    colToAddO = input("Which column is the cell you want to add in: ")
+    rowToRemoveO = input("Which row is the cell you want to remove in: ")
+    colToRemoveO = input("Which column is the cell you want to remove in: ")
+    grid[int(rowToAddO)][int(colToAddO)] = 1
+    grid[int(rowToRemoveO)][int(colToRemoveO)] = 0
+
+    print("Player X's turn")
+    rowToAddX = input("Which row is the cell you want to add in: ")
+    colToAddX = input("Which column is the cell you want to add in: ")
+    rowToRemoveX = input("Which row is the cell you want to remove in: ")
+    colToRemoveX = input("Which column is the cell you want to remove in: ")
+    grid[int(rowToAddX)][int(colToAddX)] = 2
+    grid[int(rowToRemoveX)][int(colToRemoveX)] = 0
