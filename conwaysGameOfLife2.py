@@ -27,6 +27,14 @@ for i in range(10):
         row.append(0)
     grid.append(row)
 
+for row, col in player1coord:
+    grid[row][col] = 1
+
+for row, col in player2coord:
+    grid[row][col] = 2
+
+#CREATOR function makes a grid based on data provided previously.
+#It takes in input as a 2-dimensional list.
 def CREATOR(grid):
     print("  ", end = "")
     for i in range(len(grid)):
@@ -51,8 +59,34 @@ def findAndCount(grid, int):
                 count += 1
     return count
 
+#neighbor function takes the coordinates of a cell and uses
+#the game rules to decide if the cell lives or dies.
+def neighbor(row, col):
+    count = 0
+    #checking if the surrounding cells are alive or dead
+    if grid[row-1][col] != 0:
+        count += 1
+    if grid[row-1][col+1] != 0:
+        count += 1
+    if grid[row][col+1] != 0:
+        count += 1
+    if grid[row+1][col+1] != 0:
+        count += 1
+    if grid[row+1][col] != 0:
+        count += 1
+    if grid[row+1][col-1] != 0:
+        count += 1
+    if grid[row][col-1] != 0:
+        count += 1
+    if grid[row-1][col-1] != 0:
+        count += 1
+    #determining whether the current cell lives or dies
+
+
 while True:
     CREATOR(grid)
+
+    
     playerOcount = findAndCount(grid, 1)
     playerXcount = findAndCount(grid, 2)
     
