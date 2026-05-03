@@ -1,3 +1,4 @@
+import random
 ninput = open("player1.txt", "r")
 player1List = ninput.readlines()
 ninput.close()
@@ -51,6 +52,8 @@ def CREATOR(grid):
                 print(" X", end = "")
         print("")
 
+#returns the number of a specific number within a grid
+#used to find the different player counts
 def findAndCount(grid, int):
     count = 0
     for row in range(len(grid)):
@@ -62,31 +65,71 @@ def findAndCount(grid, int):
 #neighbor function takes the coordinates of a cell and uses
 #the game rules to decide if the cell lives or dies.
 def neighbor(row, col):
-    count = 0
+    countO = 0
+    countX = 0
     #checking if the surrounding cells are alive or dead
-    if grid[row-1][col] != 0:
-        count += 1
-    if grid[row-1][col+1] != 0:
-        count += 1
-    if grid[row][col+1] != 0:
-        count += 1
-    if grid[row+1][col+1] != 0:
-        count += 1
+    if row - 1 >= 0 and grid[row-1][col] == 1:
+        countO += 1
+    elif row - 1 >= 0 and grid[row-1][col] == 2:
+        countX += 1
+    
+    if row - 1 >= 0 and col + 1 < len(grid[row]) and grid[row-1][col+1] == 1:
+        countO += 1
+    elif row - 1 >= 0 and col + 1 < len(grid[row]) and grid[row-1][col+1] == 2:
+        countX += 1
+    
+    if col + 1 < len(grid[row]) and grid[row][col+1] == 1:
+        countO += 1
+    elif col + 1 < len(grid[row]) and grid[row][col+1] == 2:
+        countX += 1
+    
+    if row + 1 < len(grid) and col + 1 < len(grid[row]) and grid[row+1][col+1] == 1:
+        countO += 1
+    elif row + 1 < len(grid) and col + 1 < len(grid[row]) and grid[row+1][col+1] == 2:
+        countX += 1
+    
     if grid[row+1][col] != 0:
         count += 1
+    
     if grid[row+1][col-1] != 0:
         count += 1
+    
     if grid[row][col-1] != 0:
         count += 1
+    
     if grid[row-1][col-1] != 0:
         count += 1
+    
     #determining whether the current cell lives or dies
-
+    
+    #these are for when the cell is alive
+    #but has too few living cells around it
+    if countO < 2 and grid[row][col] == 1:
+        grid[row][col] = 0
+    elif countX < 2 and grid[row][col] == 2:
+        grid[row][col] = 0
+    
+    #these are for if the cell is alive
+    #but has too many living cells around it
+    if countO > 3 and grid[row][col] == 1:
+        grid[row][col] = 0
+    elif countX > 3 and grid[row][col] == 2:
+        grid[row][col] = 0
+    
+    #these are for when the cell is already dead
+    #but based on the number of living cells around it
+    #will either become an X or and O
+    if countO == 3 and grid[row][col] == 0:
+        grid[row][col] = 1
+    elif countX == 3 and grid[row][col] == 0:
+        grid[row][col] = 2
+    elif countX == 3 and countO == 3 and grid[row][col] == 0:
+        num = random.randint(1,2)
+        grid[row][col] = num
 
 while True:
     CREATOR(grid)
 
-    
     playerOcount = findAndCount(grid, 1)
     playerXcount = findAndCount(grid, 2)
     
@@ -105,3 +148,8 @@ while True:
     colToRemoveX = input("Which column is the cell you want to remove in: ")
     grid[int(rowToAddX)][int(colToAddX)] = 2
     grid[int(rowToRemoveX)][int(colToRemoveX)] = 0
+
+    for row in range(len(grid)):
+        for col in range(len(grid[row])):
+            neighbor(row, col)
+
