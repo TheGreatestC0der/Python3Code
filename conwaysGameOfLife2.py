@@ -88,17 +88,25 @@ def neighbor(row, col):
     elif row + 1 < len(grid) and col + 1 < len(grid[row]) and grid[row+1][col+1] == 2:
         countX += 1
     
-    if grid[row+1][col] != 0:
-        count += 1
+    if row + 1 < len(grid) and grid[row+1][col] == 1:
+        countO += 1
+    elif row + 1 < len(grid) and grid[row+1][col] == 1:
+        countX += 1
     
-    if grid[row+1][col-1] != 0:
-        count += 1
+    if row + 1 < len(grid) and col - 1 > 0 and grid[row+1][col-1] == 1:
+        countO += 1
+    elif row + 1 < len(grid) and col - 1 > 0 and grid[row+1][col-1] == 2:
+        countX += 1
     
-    if grid[row][col-1] != 0:
-        count += 1
+    if col - 1 > 0 and grid[row][col-1] == 1:
+        countO += 1
+    elif col - 1 > 0 and grid[row][col-1] == 2:
+        countX += 1
     
-    if grid[row-1][col-1] != 0:
-        count += 1
+    if row - 1 > 0 and col - 1 > 0 and grid[row-1][col-1] == 1:
+        countO += 1
+    elif row - 1 > 0 and col - 1 > 0 and grid[row-1][col-1] == 2:
+        countX += 1
     
     #determining whether the current cell lives or dies
     
@@ -119,13 +127,13 @@ def neighbor(row, col):
     #these are for when the cell is already dead
     #but based on the number of living cells around it
     #will either become an X or and O
-    if countO == 3 and grid[row][col] == 0:
+    if countX == 3 and countO == 3 and grid[row][col] == 0:
+        num = random.randint(1,2)
+        grid[row][col] = num
+    elif countO == 3 and grid[row][col] == 0:
         grid[row][col] = 1
     elif countX == 3 and grid[row][col] == 0:
         grid[row][col] = 2
-    elif countX == 3 and countO == 3 and grid[row][col] == 0:
-        num = random.randint(1,2)
-        grid[row][col] = num
 
 while True:
     CREATOR(grid)
