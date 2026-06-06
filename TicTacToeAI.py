@@ -1,3 +1,10 @@
+#The AI should:
+#Play a winning move if there is one,
+#Play a move that blocks a winning move from the opponent, or
+#Play center if it is open.
+#To do this, create a function that tests if a move is a winning move.
+#Create a duplicate board each time so the test move does not affect the actual board.
+
 grid = []
 for i in range(3):
     row = []
@@ -66,8 +73,43 @@ def CHECK_WIN(grid):
     if count == 9:
         return 0
 
-def computer(grid):
-    
+#creates a copy of a grid for testing purposes
+def copy(grid):
+    gridTemp = []
+    for row in range(len(grid)):
+        rows = []
+        for col in range(len(grid[row])):
+            rows.append(grid[row][col])
+        gridTemp.append(rows)
+    return gridTemp
+
+#determines all possible moves the computer could make at the time
+#this counts as all future player moves since the computer
+#might have to spend a move blocking the player's winning move
+def pos_moves(gridTemp):
+    movesList = []
+    for row in range(len(gridTemp)):
+        rows = []
+        for col in range(len(gridTemp[row])):
+            if gridTemp[row][col] == " ":
+                rows.append(col)
+        movesList.append(rows)
+    return movesList
+
+#function for the AI: determines if a move is a winning move
+#returns either True or False
+def win_move_computer(gridTemp, row, col):
+    gridTemp[row][col] = 2
+    if CHECK_WIN(gridTemp) == 2:
+        return True
+    else:
+        return False
+def win_move_player(gridTemp, row, col):
+    gridTemp[row][col] = 1
+    if CHECK_WIN(gridTemp) == 1:
+        return True
+    else:
+        return False
 
 while True:
     if count == 0:
