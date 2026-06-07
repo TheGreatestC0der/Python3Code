@@ -5,6 +5,8 @@
 #To do this, create a function that tests if a move is a winning move.
 #Create a duplicate board each time so the test move does not affect the actual board.
 
+import random
+
 grid = []
 for i in range(3):
     row = []
@@ -96,24 +98,27 @@ def pos_moves(gridTemp):
         movesList.append(rows)
     return movesList
 
-#function for the AI: determines if a move is a winning move
+#both functions determine if a move is a winning move
 #returns either True or False
-def win_move_computer(gridTemp, row, col):
-    gridTemp[row][col] = 2
+def win_move_computer(movesList, row, col):
+    movesList[row][col] = 2
     if CHECK_WIN(gridTemp) == 2:
         return True
     else:
         return False
-def win_move_player(gridTemp, row, col):
-    gridTemp[row][col] = 1
+def win_move_player(movesList, row, col):
+    movesList[row][col] = 1
     if CHECK_WIN(gridTemp) == 1:
         return True
     else:
         return False
 
+count = 0
 while True:
     if count == 0:
         CREATOR(grid)
+    
+    #player code for game
     player_row = int(input("Player, which row is the spot you want to mark in? "))
     player_col = int(input("Which column is the spot you want to mark in? "))
     if grid[player_row][player_col] == " ":
@@ -127,4 +132,46 @@ while True:
     elif CHECK_WIN(grid) == 0:
         print("It's a tie!")
         break
+    
+    #computer code and thought process
+    gridTemp = copy(grid)
+    movesList = pos_moves(gridTemp)
+    for row in range(len(movesList)):
+        for col in range(len(movesList[row])):
+            
+            #if the computer has a winning move it will immediately
+            #pick that move first
+            if win_move_computer(movesList, row, col):
+                grid[row][col] = 2
+            
+            #if the player has a winning move, the computer will block it
+            elif win_move_player(movesList, row, col):
+                grid[row][col] = 2
+            
+            #if there is no winning move the computer checks the center
+            #if it is open it takes it
+            elif grid[1][1] == " ":
+                grid[1][1] = 2
+            
+            #if there are no winning moves and the center is taken
+            #the computer will pick randomly from its existing possible moves
+            else:
+                while True:
+                    randomRow = random.randint(0, 2)
+                    randomCol = random.randint(0, 2)
+                    if grid[randomRow][randomCol] != " ":
+                        pass
+                    else:
+                        grid[randomRow][randomCol] = 2
+
+    #for the computer we don't need to check whether a spot is taken
+    #as it only considers moves for spots that are empty
+    if CHECK_WIN(grid) == 2:
+        print("The computer wins!")
+        break
+    elif CHECK_WIN(grid) == 0:
+        print("It's a tie!")
+        break
+    count += 1
+                
     
