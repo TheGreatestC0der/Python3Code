@@ -58,15 +58,27 @@ def CHECK_WIN(grid):
             elif grid[row][col] == 2:
                 if row + 1 < len(grid) and grid[row + 1][col] == 2:
                     if row + 2 < len(grid) and grid[row + 2][col] == 2:
+                        print(1)
+                        print(grid)
+                        print("error")
                         return 2
                 elif col + 1 < len(grid[row]) and grid[row][col + 1] == 2:
                     if col + 2 < len(grid[row]) and grid[row][col + 2] == 2:
+                        print(2)
+                        print(grid)
+                        print("error")
                         return 2
                 elif row + 1 < len(grid) and col + 1 < len(grid[row]) and grid[row + 1][col + 1] == 2:
                     if row + 2 < len(grid) and col + 2 < len(grid[row]) and grid[row + 2][col + 2] == 2:
+                        print(3)
+                        print(grid)
+                        print("error")
                         return 2
                 elif row - 1 > 0 and col + 1 < len(grid[row]) and grid[row - 1][col + 1] == 2:
                     if row - 2 > 0 and col + 2 < len(grid[row]) and grid[row - 2][col + 2] == 2:
+                        print(4)
+                        print(grid)
+                        print("error")
                         return 2
     for row in range(len(grid)):
         for col in range(len(grid[0])):
@@ -90,24 +102,22 @@ def copy(grid):
 #might have to spend a move blocking the player's winning move
 def pos_moves(gridTemp):
     movesList = []
-    for row in range(len(gridTemp)):
-        rows = []
-        for col in range(len(gridTemp[row])):
-            if gridTemp[row][col] == " ":
-                rows.append(col)
-        movesList.append(rows)
+    for x in range(len(gridTemp)):
+        for y in range(len(gridTemp[x])):
+            if gridTemp[x][y] == " ":
+                movesList.append([x,y])
     return movesList
 
 #both functions determine if a move is a winning move
 #returns either True or False
-def win_move_computer(movesList, row, col):
-    movesList[row][col] = 2
+def win_move_computer(gridTemp, x, y):
+    gridTemp[x][y] = 2
     if CHECK_WIN(gridTemp) == 2:
         return True
     else:
         return False
-def win_move_player(movesList, row, col):
-    movesList[row][col] = 1
+def win_move_player(gridTemp, x, y):
+    gridTemp[x][y] = 1
     if CHECK_WIN(gridTemp) == 1:
         return True
     else:
@@ -136,33 +146,48 @@ while True:
     #computer code and thought process
     gridTemp = copy(grid)
     movesList = pos_moves(gridTemp)
-    for row in range(len(movesList)):
-        for col in range(len(movesList[row])):
+    for x,y in movesList:
+        check = False
+        #if the computer has a winning move it will immediately
+        #pick that move first
+        if win_move_computer(gridTemp, x, y):
+            grid[x][y] = 2
+            print(5)
+            CREATOR(grid)
+            print(grid)
             
-            #if the computer has a winning move it will immediately
-            #pick that move first
-            if win_move_computer(movesList, row, col):
-                grid[row][col] = 2
+        #if the player has a winning move, the computer will block it
+        elif win_move_player(gridTemp, x, y):
+            grid[x][y] = 2
+            print("six")
+            CREATOR(grid)
+            print(grid)
             
-            #if the player has a winning move, the computer will block it
-            elif win_move_player(movesList, row, col):
-                grid[row][col] = 2
+        #if there is no winning move the computer checks the center
+        #if it is open it takes it
+        elif grid[1][1] == " ":
+            grid[1][1] = 2
+            print(7)
+            CREATOR(grid)
+            print(grid)
             
-            #if there is no winning move the computer checks the center
-            #if it is open it takes it
-            elif grid[1][1] == " ":
-                grid[1][1] = 2
-            
-            #if there are no winning moves and the center is taken
-            #the computer will pick randomly from its existing possible moves
-            else:
-                while True:
-                    randomRow = random.randint(0, 2)
-                    randomCol = random.randint(0, 2)
-                    if grid[randomRow][randomCol] != " ":
-                        pass
-                    else:
-                        grid[randomRow][randomCol] = 2
+        #if there are no winning moves and the center is taken
+        #the computer will pick randomly from its existing possible moves
+        else:
+            while True:
+                randomRow = random.randint(0, 2)
+                randomCol = random.randint(0, 2)
+                if grid[randomRow][randomCol] != " ":
+                    pass
+                else:
+                    grid[randomRow][randomCol] = 2
+                    print(8)
+                    print(grid)
+                    CREATOR(grid)
+                    check = True
+                    break
+        if check:
+            break
 
     #for the computer we don't need to check whether a spot is taken
     #as it only considers moves for spots that are empty
