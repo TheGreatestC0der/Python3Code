@@ -45,40 +45,36 @@ def CHECK_WIN(grid):
             if grid[row][col] == 1:
                 if row + 1 < len(grid) and grid[row + 1][col] == 1:
                     if row + 2 < len(grid) and grid[row + 2][col] == 1:
+                        print(-4)
                         return 1
                 elif col + 1 < len(grid[row]) and grid[row][col + 1] == 1:
                     if col + 2 < len(grid[row]) and grid[row][col + 2] == 1:
+                        print(-3)
                         return 1
                 elif row + 1 < len(grid) and col + 1 < len(grid[row]) and grid[row + 1][col + 1] == 1:
                     if row + 2 < len(grid) and col + 2 < len(grid[row]) and grid[row + 2][col + 2] == 1:
+                        print(-2)
                         return 1
                 elif row - 1 > 0 and col + 1 < len(grid[row]) and grid[row - 1][col + 1] == 1:
                     if row - 2 > 0 and col + 2 < len(grid[row]) and grid[row - 2][col + 2] == 1:
+                        print(-1)
                         return 1
             elif grid[row][col] == 2:
                 if row + 1 < len(grid) and grid[row + 1][col] == 2:
                     if row + 2 < len(grid) and grid[row + 2][col] == 2:
                         print(1)
-                        print(grid)
-                        print("error")
                         return 2
                 elif col + 1 < len(grid[row]) and grid[row][col + 1] == 2:
                     if col + 2 < len(grid[row]) and grid[row][col + 2] == 2:
                         print(2)
-                        print(grid)
-                        print("error")
                         return 2
                 elif row + 1 < len(grid) and col + 1 < len(grid[row]) and grid[row + 1][col + 1] == 2:
                     if row + 2 < len(grid) and col + 2 < len(grid[row]) and grid[row + 2][col + 2] == 2:
                         print(3)
-                        print(grid)
-                        print("error")
                         return 2
                 elif row - 1 > 0 and col + 1 < len(grid[row]) and grid[row - 1][col + 1] == 2:
                     if row - 2 > 0 and col + 2 < len(grid[row]) and grid[row - 2][col + 2] == 2:
                         print(4)
-                        print(grid)
-                        print("error")
                         return 2
     for row in range(len(grid)):
         for col in range(len(grid[0])):
@@ -150,18 +146,22 @@ while True:
         check = False
         #if the computer has a winning move it will immediately
         #pick that move first
-        if win_move_computer(gridTemp, x, y):
+        print(win_move_computer(gridTemp, x, y))
+        print(win_move_player(gridTemp, x, y))
+        if win_move_computer(gridTemp, x, y) == True:
             grid[x][y] = 2
             print(5)
             CREATOR(grid)
             print(grid)
+            break
             
         #if the player has a winning move, the computer will block it
-        elif win_move_player(gridTemp, x, y):
+        elif win_move_player(gridTemp, x, y) == True:
             grid[x][y] = 2
             print("six")
             CREATOR(grid)
             print(grid)
+            break
             
         #if there is no winning move the computer checks the center
         #if it is open it takes it
@@ -170,6 +170,7 @@ while True:
             print(7)
             CREATOR(grid)
             print(grid)
+            break
             
         #if there are no winning moves and the center is taken
         #the computer will pick randomly from its existing possible moves
@@ -182,8 +183,8 @@ while True:
                 else:
                     grid[randomRow][randomCol] = 2
                     print(8)
-                    print(grid)
                     CREATOR(grid)
+                    print(grid)
                     check = True
                     break
         if check:
