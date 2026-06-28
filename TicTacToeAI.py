@@ -40,6 +40,7 @@ def CREATOR(grid):
 
 def CHECK_WIN(grid):
     count = 0
+    CREATOR(grid)
     for row in range(len(grid)):
         for col in range(len(grid[row])):
             if grid[row][col] == 1:
@@ -106,14 +107,12 @@ def pos_moves(gridTemp):
 
 #both functions determine if a move is a winning move
 #returns either True or False
-def win_move_computer(gridTemp, x, y):
-    gridTemp[x][y] = 2
+def win_move_computer(gridTemp):
     if CHECK_WIN(gridTemp) == 2:
         return True
     else:
         return False
-def win_move_player(gridTemp, x, y):
-    gridTemp[x][y] = 1
+def win_move_player(gridTemp):
     if CHECK_WIN(gridTemp) == 1:
         return True
     else:
@@ -140,27 +139,24 @@ while True:
         break
     
     #computer code and thought process
-    gridTemp = copy(grid)
-    movesList = pos_moves(gridTemp)
+    movesList = pos_moves(grid)
     for x,y in movesList:
+        gridTemp = copy(grid)
+        gridTemp[x][y] = 2
         check = False
         #if the computer has a winning move it will immediately
         #pick that move first
-        print(win_move_computer(gridTemp, x, y))
-        print(win_move_player(gridTemp, x, y))
-        if win_move_computer(gridTemp, x, y) == True:
+        if win_move_computer(gridTemp) == True:
             grid[x][y] = 2
             print(5)
             CREATOR(grid)
-            print(grid)
             break
             
         #if the player has a winning move, the computer will block it
-        elif win_move_player(gridTemp, x, y) == True:
+        elif win_move_player(gridTemp) == True:
             grid[x][y] = 2
-            print("six")
+            print("6")
             CREATOR(grid)
-            print(grid)
             break
             
         #if there is no winning move the computer checks the center
@@ -169,7 +165,6 @@ while True:
             grid[1][1] = 2
             print(7)
             CREATOR(grid)
-            print(grid)
             break
             
         #if there are no winning moves and the center is taken
