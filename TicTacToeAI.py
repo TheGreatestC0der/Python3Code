@@ -38,51 +38,33 @@ def CREATOR(grid):
         if row < 2:
             print("--+---+--")
 
-def CHECK_WIN(grid):
+def CHECK_WIN(table):
     count = 0
-    CREATOR(grid)
-    for row in range(len(grid)):
-        for col in range(len(grid[row])):
-            if grid[row][col] == 1:
-                if row + 1 < len(grid) and grid[row + 1][col] == 1:
-                    if row + 2 < len(grid) and grid[row + 2][col] == 1:
-                        print(-4)
-                        return 1
-                elif col + 1 < len(grid[row]) and grid[row][col + 1] == 1:
-                    if col + 2 < len(grid[row]) and grid[row][col + 2] == 1:
-                        print(-3)
-                        return 1
-                elif row + 1 < len(grid) and col + 1 < len(grid[row]) and grid[row + 1][col + 1] == 1:
-                    if row + 2 < len(grid) and col + 2 < len(grid[row]) and grid[row + 2][col + 2] == 1:
-                        print(-2)
-                        return 1
-                elif row - 1 > 0 and col + 1 < len(grid[row]) and grid[row - 1][col + 1] == 1:
-                    if row - 2 > 0 and col + 2 < len(grid[row]) and grid[row - 2][col + 2] == 1:
-                        print(-1)
-                        return 1
-            elif grid[row][col] == 2:
-                if row + 1 < len(grid) and grid[row + 1][col] == 2:
-                    if row + 2 < len(grid) and grid[row + 2][col] == 2:
-                        print(1)
-                        return 2
-                elif col + 1 < len(grid[row]) and grid[row][col + 1] == 2:
-                    if col + 2 < len(grid[row]) and grid[row][col + 2] == 2:
-                        print(2)
-                        return 2
-                elif row + 1 < len(grid) and col + 1 < len(grid[row]) and grid[row + 1][col + 1] == 2:
-                    if row + 2 < len(grid) and col + 2 < len(grid[row]) and grid[row + 2][col + 2] == 2:
-                        print(3)
-                        return 2
-                elif row - 1 > 0 and col + 1 < len(grid[row]) and grid[row - 1][col + 1] == 2:
-                    if row - 2 > 0 and col + 2 < len(grid[row]) and grid[row - 2][col + 2] == 2:
-                        print(4)
-                        return 2
-    for row in range(len(grid)):
-        for col in range(len(grid[0])):
-            if grid[row][col] != " ":
-                count += 1
-    if count == 9:
-        return 0
+    if table[0][0] == table[0][1] == table[0][2] != " ":
+        return table[0][0]
+    elif table[1][0] == table[1][1] == table[1][2] != " ":
+        return table[1][0]
+    elif table[2][0] == table[2][1] == table[2][2] != " ":
+        return table[2][0]
+    elif table[0][0] == table[1][0] == table[2][0] != " ":
+        return table[0][0]
+    elif table[0][1] == table[1][1] == table[2][1] != " ":
+        return table[0][1]
+    elif table[0][2] == table[1][2] == table[2][2] != " ":
+        return table[0][2]
+    elif table[0][0] == table[1][1] == table[2][2] != " ":
+        return table[0][0]
+    elif table[0][2] == table[1][1] == table[2][0] != " ":
+        return table[0][2]
+    else:
+        for row in range(len(table)):
+            for col in range(len(table[row])):
+                if table[row][col] != " ":
+                    count += 1
+        if count == 9:
+            return 0
+        else:
+            return -1
 
 #creates a copy of a grid for testing purposes
 def copy(grid):
@@ -97,23 +79,23 @@ def copy(grid):
 #determines all possible moves the computer could make at the time
 #this counts as all future player moves since the computer
 #might have to spend a move blocking the player's winning move
-def pos_moves(gridTemp):
+def pos_moves(tableTwo):
     movesList = []
-    for x in range(len(gridTemp)):
-        for y in range(len(gridTemp[x])):
-            if gridTemp[x][y] == " ":
+    for x in range(len(tableTwo)):
+        for y in range(len(tableTwo[x])):
+            if tableTwo[x][y] == " ":
                 movesList.append([x,y])
     return movesList
 
 #both functions determine if a move is a winning move
 #returns either True or False
-def win_move_computer(gridTemp):
-    if CHECK_WIN(gridTemp) == 2:
+def win_move_computer(tableTwo):
+    if CHECK_WIN(tableTwo) == 2:
         return True
     else:
         return False
-def win_move_player(gridTemp):
-    if CHECK_WIN(gridTemp) == 1:
+def win_move_player(tableTwo):
+    if CHECK_WIN(tableTwo) == 1:
         return True
     else:
         return False
@@ -148,22 +130,23 @@ while True:
         #pick that move first
         if win_move_computer(gridTemp) == True:
             grid[x][y] = 2
-            print(5)
+            print("win")
             CREATOR(grid)
             break
             
         #if the player has a winning move, the computer will block it
-        elif win_move_player(gridTemp) == True:
+        gridTemp[x][y] = 1
+        if win_move_player(gridTemp) == True:
             grid[x][y] = 2
-            print("6")
+            print("block")
             CREATOR(grid)
             break
             
         #if there is no winning move the computer checks the center
         #if it is open it takes it
-        elif grid[1][1] == " ":
+        if grid[1][1] == " ":
             grid[1][1] = 2
-            print(7)
+            print("center")
             CREATOR(grid)
             break
             
@@ -177,7 +160,7 @@ while True:
                     pass
                 else:
                     grid[randomRow][randomCol] = 2
-                    print(8)
+                    print("random")
                     CREATOR(grid)
                     print(grid)
                     check = True
