@@ -2,41 +2,30 @@ import math
 import random
 
 def print_board(board):
-    for row in range(len(board)):
-        for col in range(len(board[row])):
-            if board[row][col] == 1:
-                if col == len(board[row]) - 1:
-                    print("O")
-                else:
-                    print("O", end = "")
-                    print(" | ", end = "")
-            elif board[row][col] == 2:
-                if col == len(board[row]) - 1:
-                    print("X")
-                else:
-                    print("X", end = "")
-                    print(" | ", end = "")
+    #Prints the current state of the board in a 3x3 grid format.
+    for row in range(3):
+        for col in range(3):
+            if col == 2:
+                print(board[row * 3 + col])
             else:
-                if col == len(board[row]) - 1:
-                    print(" ")
-                else:
-                    print(" ", end = "")
-                    print(" | ", end = "")
+                print(board[row * 3 + col], end=" | ")
         if row < 2:
             print("--+---+--")
+    #Parameters:
+    #board (list): The current game board.
 
 def is_winner(board, player):
     #Checks the 3x3 board to determine if the specified player has won.
     #You should check all 3 horizontal rows, 3 vertical columns, and 2 diagonals.
     for row in range(3):
-        if all(board[row][col] == player for col in range(3)):
+        if all(board[row * 3 + col] == player for col in range(3)):
             return True
     for col in range(3):
-        if all(board[row][col] == player for row in range(3)):
+        if all(board[row * 3 + col] == player for row in range(3)):
                 return True
-    if all(board[i][i] == player for i in range(3)):
+    if all(board[i * 3 + i] == player for i in range(3)):
         return True
-    if all(board[i][2-i] == player for i in range(3)):
+    if all(board[i * 3 + (2-i)] == player for i in range(3)):
         return True
     #Parameters:
     #board (list): The current game board.
@@ -46,9 +35,9 @@ def is_winner(board, player):
 
 def is_board_full(board):
     #Checks if there are any remaining playable spaces left on the board.
-    for row in range(len(board)):
-        for col in range(len(board[row])):
-            if board[row][col] == " ":
+    for row in range(3):
+        for col in range(3):
+            if board[row * 3 + col] == " ":
                 return False
     return True
     #Parameters:
@@ -60,9 +49,9 @@ def is_board_full(board):
 def get_available_moves(board):
     #Finds all empty positions on the current board.
     moves = []
-    for row in range(len(board)):
-        for col in range(len(board[row])):
-            if board[row][col] == " ":
+    for row in range(3):
+        for col in range(3):
+            if board[row * 3 + col] == " ":
                 moves.append(row * 3 + col)
     
     return moves
@@ -86,24 +75,25 @@ def minimax(board, is_maximizing):
       #recursively call minimax with is_maximizing=False, track the highest score,
       #and undo the move.
     if is_maximizing:
+        best_score = -math.inf
         for move in get_available_moves(board):
             row, col = divmod(move, 3)
-            board[row][col] = "X"
-            score = minimax(board, False)
-            board[row][col] = " "
-            if score == 1:
-                return score  # Early exit if a winning move is found
+            score = minimax(board, True)
+            if best_score < score:
+                best_score = score
+
     #- If is_maximizing is False: Loop through available moves, temporarily place 'O',
       #recursively call minimax with is_maximizing=True, track the lowest score,
       #and undo the move.
     else:
+        best_score = math.inf
         for move in get_available_moves(board):
             row, col = divmod(move, 3)
-            board[row][col] = "O"
-            score = minimax(board, True)
-            board[row][col] = " "
-            if score == -1:
-                return score  # Early exit if a losing move is found
+            score = minimax(board, False)
+            if best_score > score:
+                best_score = score
+    
+    return best_score
     #Parameters:
     #board (list): The simulated game board.
     #is_maximizing (bool): True if it's the AI's turn (MAX), False if it's the human's (MIN).
@@ -117,7 +107,7 @@ def find_best_move(board):
     #results in the highest score.
     pos_moves = get_available_moves(board)  # Get the list of available moves
     
-    best_score = 0
+    best_score = -math.inf
     best_move = (0, 0)
     for move in pos_moves:
         minimax_score = minimax(board, True)  # Evaluate the move using minimax
@@ -135,5 +125,44 @@ def find_best_move(board):
 #The main game loop. Initializes a blank board (9 spaces of ' '), tracks whose 
 #turn it is, handles user keyboard input, calls find_best_move() when it is the 
 #AI's turn, updates the board, and prints the result when a terminal state is reached.
-while True:
-    board = 
+board = [" ", " ", " ",
+         " ", " ", " ",
+         " ", " ", " "]
+count = 0
+while True:    
+    if count == 0:
+        print_board(board)
+        count += 1
+    
+    #player code for game
+    player_row = int(input("Player, which row is the spot you want to mark in? "))
+    player_col = int(input("Which column is the spot you want to mark in? "))
+    if board[player_row * 3 + player_col] == " ":
+        board[player_row * 3 + player_col] = "X"
+    else:
+        print("That spot's taken...")
+    
+    #display the board after the player's move
+    print_board(board)
+    
+    #check if the player has won or if it is a tie
+    if is_winner(board, "X"):
+        print("Player 1 wins!")
+        break
+    elif is_board_full(board):
+        print("It's a tie!")
+        break
+    
+    #computer code and thought process
+    best_move_index = find_best_move(board)
+    board[best_move_index] = "O"
+    print_board(board)
+
+    #check if the computer has won or if it is a tie
+    if is_winner(board, "O"):
+        print("Computer wins!")
+        break
+    elif is_board_full(board):
+        print("It's a tie!")
+        break
+
