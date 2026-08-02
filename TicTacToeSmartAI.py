@@ -35,10 +35,9 @@ def is_winner(board, player):
 
 def is_board_full(board):
     #Checks if there are any remaining playable spaces left on the board.
-    for row in range(3):
-        for col in range(3):
-            if board[row * 3 + col] == " ":
-                return False
+    for space in board:
+        if space == " ":
+            return False
     return True
     #Parameters:
     #board (list): The current game board.
@@ -49,11 +48,9 @@ def is_board_full(board):
 def get_available_moves(board):
     #Finds all empty positions on the current board.
     moves = []
-    for row in range(3):
-        for col in range(3):
-            if board[row * 3 + col] == " ":
-                moves.append(row * 3 + col)
-    
+    for i in range(len(board)):
+        if board[i] == " ":
+            moves.append(i)
     return moves
     #Parameters:
     #board (list): The current game board.
@@ -71,27 +68,32 @@ def minimax(board, is_maximizing):
         return -1  # 'O' wins
     if is_board_full(board):
         return 0  # Tie
-    # - If is_maximizing is True: Loop through available moves, temporarily place 'X',
+    # - If is_maximizing is True: Loop through available moves, temporarily place 'O',
       #recursively call minimax with is_maximizing=False, track the highest score,
       #and undo the move.
     if is_maximizing:
         best_score = -math.inf
         for move in get_available_moves(board):
-            row, col = divmod(move, 3)
-            score = minimax(board, True)
+            board[move] = "O"
+            score = minimax(board, False)
+            board[move] = " "
+
             if best_score < score:
                 best_score = score
 
-    #- If is_maximizing is False: Loop through available moves, temporarily place 'O',
+    #- If is_maximizing is False: Loop through available moves, temporarily place 'X',
       #recursively call minimax with is_maximizing=True, track the lowest score,
       #and undo the move.
     else:
         best_score = math.inf
         for move in get_available_moves(board):
-            row, col = divmod(move, 3)
-            score = minimax(board, False)
+            board[move] = "X"
+            score = minimax(board, True)
+            board[move] = " "
+
             if best_score > score:
                 best_score = score
+        
     
     return best_score
     #Parameters:
@@ -110,7 +112,10 @@ def find_best_move(board):
     best_score = -math.inf
     best_move = (0, 0)
     for move in pos_moves:
-        minimax_score = minimax(board, True)  # Evaluate the move using minimax
+        board[move] = "O"
+        minimax_score = minimax(board, False)  # Evaluate the move using minimax
+        board[move] = " "
+
         if minimax_score > best_score:
             best_score = minimax_score
             best_move = divmod(move, 3)  # Convert index to (row, col)
@@ -120,7 +125,7 @@ def find_best_move(board):
     
     #Returns:
     #int: The best index (0-8) for the AI to play.
-    return best_move[0] * 3 + best_move[1]  # Convert (row, col) back to index
+    return best_move  # Convert (row, col) back to index
 
 #The main game loop. Initializes a blank board (9 spaces of ' '), tracks whose 
 #turn it is, handles user keyboard input, calls find_best_move() when it is the 
@@ -129,40 +134,31 @@ board = [" ", " ", " ",
          " ", " ", " ",
          " ", " ", " "]
 count = 0
+turn = "X"
 while True:    
-    if count == 0:
-        print_board(board)
-        count += 1
-    
-    #player code for game
-    player_row = int(input("Player, which row is the spot you want to mark in? "))
-    player_col = int(input("Which column is the spot you want to mark in? "))
-    if board[player_row * 3 + player_col] == " ":
-        board[player_row * 3 + player_col] = "X"
+    if turn == "O":
+        best_move_index = find_best_move(board)
+        board[best_move_index] = "O"
+        turn = "X"
     else:
-        print("That spot's taken...")
-    
-    #display the board after the player's move
-    print_board(board)
-    
-    #check if the player has won or if it is a tie
+        player_row = int(input("Player, which row is the spot you want to mark in? "))
+        player_col = int(input("Which column is the spot you want to mark in? "))
+        if board[player_row * 3 + player_col] == " ":
+            board[player_row * 3 + player_col] = "X"
+        else:
+            print("That spot's taken...")
+        print_board(board)
+
     if is_winner(board, "X"):
         print("Player 1 wins!")
         break
-    elif is_board_full(board):
-        print("It's a tie!")
-        break
-    
-    #computer code and thought process
-    best_move_index = find_best_move(board)
-    board[best_move_index] = "O"
-    print_board(board)
-
-    #check if the computer has won or if it is a tie
-    if is_winner(board, "O"):
+    elif is_winner(board, "O"):
         print("Computer wins!")
         break
     elif is_board_full(board):
         print("It's a tie!")
         break
 
+    if count == 0:
+        print_board(board)
+        count += 1
