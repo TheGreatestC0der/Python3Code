@@ -61,11 +61,11 @@ def get_available_moves(board):
 def minimax(board, is_maximizing):
     #The core recursive algorithm. It plays out every possible future combination 
     #of the game to score the current board state.
-    # - Base Cases: Check if 'X' won (+1), 'O' won (-1), or the board is full (0).
+    # - Base Cases: Check if 'X' won (-1), 'O' won (+1), or the board is full (0).
     if is_winner(board, "X"):
-        return 1  # 'X' wins
+        return -1  # 'X' wins
     if is_winner(board, "O"):
-        return -1  # 'O' wins
+        return 1  # 'O' wins
     if is_board_full(board):
         return 0  # Tie
     # - If is_maximizing is True: Loop through available moves, temporarily place 'O',
@@ -118,7 +118,7 @@ def find_best_move(board):
 
         if minimax_score > best_score:
             best_score = minimax_score
-            best_move = divmod(move, 3)  # Convert index to (row, col)
+            best_move = move  # Convert index to (row, col)
 
     #Parameters:
     #board (list): The actual current game board.
@@ -133,13 +133,14 @@ def find_best_move(board):
 board = [" ", " ", " ",
          " ", " ", " ",
          " ", " ", " "]
-count = 0
 turn = "X"
+print_board(board)
 while True:    
     if turn == "O":
         best_move_index = find_best_move(board)
         board[best_move_index] = "O"
         turn = "X"
+        print_board(board)
     else:
         player_row = int(input("Player, which row is the spot you want to mark in? "))
         player_col = int(input("Which column is the spot you want to mark in? "))
@@ -148,6 +149,7 @@ while True:
         else:
             print("That spot's taken...")
         print_board(board)
+        turn = "O"
 
     if is_winner(board, "X"):
         print("Player 1 wins!")
@@ -158,7 +160,3 @@ while True:
     elif is_board_full(board):
         print("It's a tie!")
         break
-
-    if count == 0:
-        print_board(board)
-        count += 1
